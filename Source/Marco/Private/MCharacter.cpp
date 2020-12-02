@@ -70,5 +70,7 @@ void AMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AMCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AMCharacter::EndCrouch);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMCharacter::Jump);
 }
 
