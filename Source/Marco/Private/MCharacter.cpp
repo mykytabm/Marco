@@ -2,12 +2,25 @@
 
 
 #include "MCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 // Sets default values
 AMCharacter::AMCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComp->SetupAttachment(RootComponent);
+
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);
+
 
 }
 
@@ -21,11 +34,21 @@ void AMCharacter::MoveRight(float Value)
 	AddMovementInput(GetActorRightVector() * Value);
 }
 
+void AMCharacter::BeginCrouch()
+{
+	printf("Hello");
+	Crouch();
+}
+
+void AMCharacter::EndCrouch()
+{
+	UnCrouch();
+}
+
 // Called when the game starts or when spawned
 void AMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -41,5 +64,11 @@ void AMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("LookUp", this, &AMCharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &AMCharacter::AddControllerYawInput);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AMCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AMCharacter::EndCrouch);
 }
 

@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "MCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS()
 class MARCO_API AMCharacter : public ACharacter
 {
@@ -15,14 +18,27 @@ public:
 	// Sets default values for this character's properties
 	AMCharacter();
 
-	void MoveForward(float Value);
-	void MoveRight(float Value);
+	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USpringArmComponent* SpringArmComp;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+	void MoveForward(float Value);
+
+	void MoveRight(float Value);
+
+	void BeginCrouch();
+
+	void EndCrouch();
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
