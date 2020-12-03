@@ -21,7 +21,6 @@ AMCharacter::AMCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
-
 }
 
 void AMCharacter::MoveForward(float Value)
