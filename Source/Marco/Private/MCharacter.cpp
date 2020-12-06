@@ -35,7 +35,6 @@ void AMCharacter::MoveRight(float Value)
 
 void AMCharacter::BeginCrouch()
 {
-	printf("Hello");
 	Crouch();
 }
 
@@ -71,5 +70,13 @@ void AMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AMCharacter::EndCrouch);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMCharacter::Jump);
+}
+
+FVector AMCharacter::GetPawnViewLocation() const
+{
+	if (CameraComp) {
+		return CameraComp->GetComponentLocation();
+	}
+	return Super::GetPawnViewLocation();
 }
 
