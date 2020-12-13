@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class AMWeapon;
 
 UCLASS()
 class MARCO_API AMCharacter : public ACharacter
@@ -37,6 +38,29 @@ protected:
 	void BeginCrouch();
 
 	void EndCrouch();
+
+	bool bWantsToZoom;
+
+	UPROPERTY(EditDefaultsOnly, Category="Player")
+	float ZoomedFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
+	float ZoomInterpSpeed;
+	
+	float DefaultFOV;
+
+	void BeginZoom();
+
+	void EndZoom();
+
+	AMWeapon* CurrentWeapon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	TSubclassOf<AMWeapon> StarterWeaponClass;
+
+	void Fire();
+
+	//void EndFire();
 
 public:
 	// Called every frame
