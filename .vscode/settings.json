@@ -1,7 +1,11 @@
 {
 	"files.exclude": {
-		"E:/GE/PersonalProjects/ProjectMarco/Marco/.vscode": true,
-		"E:/GE/PersonalProjects/ProjectMarco/Marco/Content": true,
-		"E:/GE/PersonalProjects/ProjectMarco/Marco/Intermediate": true
+		"C:/Projects/Marco/.git": true,
+		"C:/Projects/Marco/.vs": true,
+		"C:/Projects/Marco/.vscode": true,
+		"C:/Projects/Marco/Content": true,
+		"C:/Projects/Marco/DerivedDataCache": true,
+		"C:/Projects/Marco/Intermediate": true,
+		"C:/Projects/Marco/Saved": true
 	}
 }

@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "../Marco.h"
 
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(
@@ -23,6 +25,7 @@ AMWeapon::AMWeapon()
 	RootComponent = MeshComp;
 
 	MuzzleSocketName = "MuzzleSocket";
+	BaseDamage = 20.0f;
 }
 
 // Called when the game starts or when spawned
@@ -53,21 +56,41 @@ void AMWeapon::Fire()
 		QueryParams.AddIgnoredActor(MyOwner);
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true;
+		QueryParams.bReturnPhysicalMaterial = true;
 
 		// Particle "Target" parameter
 		FVector TracerEndPoint = TraceEnd;
 
 		FHitResult Hit;
-		bool LineTraceHit = GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams);
+		bool LineTraceHit = GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams);
 
 		if (LineTraceHit)
 		{
 			AActor* HitActor = Hit.GetActor();
-			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
-			if (ImpactEffect)
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			float ActualDamage = BaseDamage;
+			if (SurfaceType == SURFACE_FLESHVULNERABLE)
 			{
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+				ActualDamage *= 1.5f;
+			}
+			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
 
+
+			UParticleSystem* SelectedEffect = nullptr;
+			switch (SurfaceType)
+			{
+			case SURFACE_FLESHDEFAULT:
+			case SURFACE_FLESHVULNERABLE:
+				SelectedEffect = FleshImpactEffect;
+				break;
+			default:
+				SelectedEffect = DefaultImpactEffect;
+				break;
+			}
+
+			if (SelectedEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
 			TracerEndPoint = Hit.ImpactPoint;
 		}
@@ -85,7 +108,8 @@ void AMWeapon::PlayFireEffects(FVector TraceEnd) {
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 	}
 
-	if (TracerEffect) {
+	if (TracerEffect)
+	{
 		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
 
 		UParticleSystemComponent* TracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
@@ -97,8 +121,9 @@ void AMWeapon::PlayFireEffects(FVector TraceEnd) {
 	APawn* MyOwner = Cast<APawn>(GetOwner());
 	if (MyOwner) {
 		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
-		if (PC) {
-			PC->ClientPlayCameraShake()
+		if (PC)
+		{
+			PC->ClientPlayCameraShake(FireCamShake);
 		}
 	}
 }
