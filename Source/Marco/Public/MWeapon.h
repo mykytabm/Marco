@@ -52,11 +52,24 @@ protected:
 	float BaseDamage;
 
 
+	void Fire();
+	FTimerHandle TimerHandle_TimeBetweenShots;
+
+	float LastFireTime;
+
+	// RPM- bullets per minute
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float FireRate;
+
+	float TimeBetweenShots;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Fire();
+	
+
+	void StartFire();
+	void StopFire();
 
 };

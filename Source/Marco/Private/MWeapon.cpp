@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "../Marco.h"
+#include "TimerManager.h"
 
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(
@@ -26,12 +27,15 @@ AMWeapon::AMWeapon()
 
 	MuzzleSocketName = "MuzzleSocket";
 	BaseDamage = 20.0f;
+	FireRate = 600;
 }
 
 // Called when the game starts or when spawned
 void AMWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TimeBetweenShots = 60 / FireRate;
 }
 
 // Called every frame
@@ -39,6 +43,17 @@ void AMWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AMWeapon::StartFire()
+{
+	auto FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AMWeapon::Fire, TimeBetweenShots, true, FirstDelay);
+}
+
+void AMWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 
 void AMWeapon::Fire()
@@ -100,6 +115,7 @@ void AMWeapon::Fire()
 		}
 
 		PlayFireEffects(TracerEndPoint);
+		LastFireTime = GetWorld()->TimeSeconds;
 	}
 }
 void AMWeapon::PlayFireEffects(FVector TraceEnd) {

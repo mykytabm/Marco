@@ -58,7 +58,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 	TSubclassOf<AMWeapon> StarterWeaponClass;
 
-	void Fire();
+	void StartFire();
+	void StopFire();
 
 	//void EndFire();
 
