@@ -19,13 +19,12 @@ public:
 	// Sets default values for this character's properties
 	AMCharacter();
 
-	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UCameraComponent* CameraComp;
+		UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USpringArmComponent* SpringArmComp;
+		USpringArmComponent* SpringArmComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,12 +40,12 @@ protected:
 
 	bool bWantsToZoom;
 
-	UPROPERTY(EditDefaultsOnly, Category="Player")
-	float ZoomedFOV;
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		float ZoomedFOV;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
-	float ZoomInterpSpeed;
-	
+		float ZoomInterpSpeed;
+
 	float DefaultFOV;
 
 	void BeginZoom();
@@ -56,7 +55,7 @@ protected:
 	AMWeapon* CurrentWeapon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-	TSubclassOf<AMWeapon> StarterWeaponClass;
+		TSubclassOf<AMWeapon> StarterWeaponClass;
 
 	void StartFire();
 	void StopFire();
