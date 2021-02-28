@@ -62,6 +62,6 @@ void AMHoverVehicle::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMHoverVehicle::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMHoverVehicle::MoveRight);
-
+	PlayerInputComponent->BindAxis("Turn", this, &AMHoverVehicle::AddControllerYawInput);
 }
 
